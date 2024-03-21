@@ -5,6 +5,27 @@
 
 using namespace std;
 
+// Algoritmo lineal O(n) - suma máxima de una subsecuencia contigua en un arreglo
+int maxSubarraySum(const vector<int>& array) {
+    int n = array.size();
+    int maxEndingHere = 0;
+    int maxSoFar = INT_MIN;
+
+    for (int i = 0; i < n; ++i) {
+        maxEndingHere = max(array[i], maxEndingHere + array[i]);
+        maxSoFar = max(maxSoFar, maxEndingHere);
+    }
+
+    return maxSoFar;
+}
+
+long long linearAlgorithm(const vector<int>& array) {
+    auto start = chrono::steady_clock::now();
+    maxSubarraySum(array);
+    auto end = chrono::steady_clock::now();
+    return chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+}
+
 // Algoritmo cuadrático O(n^2)
 long long cuadraticAlgorithm(const vector<int>& array) {
     auto start = chrono::steady_clock::now();
@@ -19,7 +40,7 @@ long long cuadraticAlgorithm(const vector<int>& array) {
     return chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 }
 
-// Algoritmo lineal logarítmico O(n log n) - Implementación de quicksort
+// Algoritmo lineal logarítmico O(n log n) - Quicksort
 void quicksort(vector<int>& array, int low, int high) {
     if (low < high) {
         int pivot = array[high];
@@ -69,12 +90,11 @@ long long logAlgorithm(const vector<int>& array, int target) {
     return chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 }
 
-// Función para encontrar la suma máxima de una subsecuencia
+// Algoritmo exponencial O(2^n) - suma máxima de una subsecuencia
 int maxSubsequenceSum(const vector<int>& array) {
     int n = array.size();
     int maxSum = INT_MIN;
 
-    // Iterar sobre todas las posibles subsecuencias
     for (int i = 0; i < (1 << n); ++i) {
         int currentSum = 0;
         for (int j = 0; j < n; ++j) {
@@ -88,7 +108,6 @@ int maxSubsequenceSum(const vector<int>& array) {
     return maxSum;
 }
 
-// Función para calcular el tiempo de ejecución del algoritmo exponencial
 long long exponentialAlgorithm(const vector<int>& array) {
     auto start = chrono::steady_clock::now();
     maxSubsequenceSum(array);
@@ -99,19 +118,29 @@ long long exponentialAlgorithm(const vector<int>& array) {
 int main() {
     vector<int> sizes = {100, 1000, 10000, 100000, 1000000};
 
-//    vector<int> cuadratic = {100, 1000, 10000, 50000, 100000};
-//
-//    cout << "Complejidad cuadrática (O(n^2)):" << endl;
-//    for (int size : cuadratic) {
-//        vector<int> array(size, 1); // Crear un vector de tamaño 'size' con todos los elementos inicializados a 1
-//        long long duration = cuadraticAlgorithm(array);
-//        cout << "Size: " << size << ", Time: " << duration << " ns" << endl;
-//    }
+    cout << "Complejidad lineal (O(n)):" << endl;
+    for (int size : sizes) {
+        // Crear un vector con números negativos para evaluar el peor caso
+        vector<int> array(size, -1000); // Todos los elementos son -1000
+
+        long long duration = linearAlgorithm(array);
+        cout << "Size: " << size << ", Time: " << duration << " ns" << endl;
+    }
+
+    cout<<endl;
+
+    vector<int> cuadratic = {100, 1000, 10000, 50000, 100000};
+
+    cout << "Complejidad cuadratica (O(n^2)):" << endl;
+    for (int size : cuadratic) {
+        vector<int> array(size, 1);
+        long long duration = cuadraticAlgorithm(array);
+        cout << "Size: " << size << ", Time: " << duration << " ns" << endl;
+    }
 
     cout << "\nComplejidad lineal logaritmica (O(n log n)):" << endl;
     for (int size : sizes) {
         vector<int> array(size);
-        // Llenar el vector con números aleatorios (no es relevante para el análisis de complejidad)
         srand(time(nullptr));
         for (int i = 0; i < size; ++i) {
             array[i] = rand() % size;
@@ -122,7 +151,6 @@ int main() {
 
     cout << "\nComplejidad logaritmica (O(log n)):" << endl;
     for (int size : sizes) {
-        // Crear un vector ordenado del peor caso para la búsqueda binaria
         vector<int> array(size);
         for (int i = 0; i < size; ++i) {
             array[i] = i;
