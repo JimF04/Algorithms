@@ -19,25 +19,16 @@ int maxSubarraySum(const vector<int>& array) {
     return maxSoFar;
 }
 
-long long linearAlgorithm(const vector<int>& array) {
-    auto start = chrono::steady_clock::now();
-    maxSubarraySum(array);
-    auto end = chrono::steady_clock::now();
-    return chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-}
-
 // Algoritmo cuadrático O(n^2)
-long long cuadraticAlgorithm(const vector<int>& array) {
-    auto start = chrono::steady_clock::now();
+long cuadraticAlgorithm(const vector<int>& array) {
     int n = array.size();
+    int result;
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
-            // Operación ficticia para ilustrar la complejidad cuadrática
-            int result = array[i] * array[j];
+            result = array[i] * array[j];
         }
     }
-    auto end = chrono::steady_clock::now();
-    return chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    return result;
 }
 
 // Algoritmo lineal logarítmico O(n log n) - Quicksort
@@ -58,14 +49,6 @@ void quicksort(vector<int>& array, int low, int high) {
     }
 }
 
-long long nLogNAlgorithm(vector<int>& array) {
-    auto start = chrono::steady_clock::now();
-    int n = array.size();
-    quicksort(array, 0, n - 1);
-    auto end = chrono::steady_clock::now();
-    return chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-}
-
 // Algoritmo logarítmico O(log n) - Búsqueda binaria
 int binarySearch(const vector<int>& array, int target) {
     int low = 0;
@@ -81,13 +64,6 @@ int binarySearch(const vector<int>& array, int target) {
         }
     }
     return -1;
-}
-
-long long logAlgorithm(const vector<int>& array, int target) {
-    auto start = chrono::steady_clock::now();
-    binarySearch(array, target);
-    auto end = chrono::steady_clock::now();
-    return chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 }
 
 // Algoritmo exponencial O(2^n) - suma máxima de una subsecuencia
@@ -108,13 +84,6 @@ int maxSubsequenceSum(const vector<int>& array) {
     return maxSum;
 }
 
-long long exponentialAlgorithm(const vector<int>& array) {
-    auto start = chrono::steady_clock::now();
-    maxSubsequenceSum(array);
-    auto end = chrono::steady_clock::now();
-    return chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-}
-
 int main() {
     vector<int> sizes = {100, 1000, 10000, 100000, 1000000};
 
@@ -123,7 +92,11 @@ int main() {
         // Crear un vector con números negativos para evaluar el peor caso
         vector<int> array(size, -1000); // Todos los elementos son -1000
 
-        long long duration = linearAlgorithm(array);
+        auto start = chrono::steady_clock::now();
+        maxSubarraySum(array);
+        auto end = chrono::steady_clock::now();
+        long duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
         cout << "Size: " << size << ", Time: " << duration << " ns" << endl;
     }
 
@@ -134,7 +107,12 @@ int main() {
     cout << "Complejidad cuadratica (O(n^2)):" << endl;
     for (int size : cuadratic) {
         vector<int> array(size, 1);
-        long long duration = cuadraticAlgorithm(array);
+
+        auto start = chrono::steady_clock::now();
+        cuadraticAlgorithm(array);
+        auto end = chrono::steady_clock::now();
+        long duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
         cout << "Size: " << size << ", Time: " << duration << " ns" << endl;
     }
 
@@ -145,7 +123,13 @@ int main() {
         for (int i = 0; i < size; ++i) {
             array[i] = rand() % size;
         }
-        long long duration = nLogNAlgorithm(array);
+
+        auto start = chrono::steady_clock::now();
+        int n = array.size();
+        quicksort(array, 0, n - 1);
+        auto end = chrono::steady_clock::now();
+        long duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
         cout << "Size: " << size << ", Time: " << duration << " ns" << endl;
     }
 
@@ -155,7 +139,12 @@ int main() {
         for (int i = 0; i < size; ++i) {
             array[i] = i;
         }
-        long long duration = logAlgorithm(array, size - 1); // Buscar el último elemento en el vector
+
+        auto start = chrono::steady_clock::now();
+        binarySearch(array, size - 1); // Buscar el último elemento
+        auto end = chrono::steady_clock::now();
+        long duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
         cout << "Size: " << size << ", Time: " << duration << " ns" << endl;
     }
 
@@ -170,7 +159,11 @@ int main() {
             array[i] = i + 1;
         }
 
-        long long duration = exponentialAlgorithm(array);
+        auto start = chrono::steady_clock::now();
+        maxSubsequenceSum(array);
+        auto end = chrono::steady_clock::now();
+        long duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
         cout << "Size: " << size << ", Time: " << duration << " ns" << endl;
     }
 
